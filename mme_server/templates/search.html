@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	{% block css %}
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+	{% endblock %}
+</head>
+
+<body>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+
+  <div class="jumbotron">
+		<div class="row">
+			<div class="col-sm text-left">
+	      <strong>Query example from terminal:</strong><br><br>
+	      <pre style="text-align: left;  white-space: pre-line">
+	        curl -XPOST \
+	        -H 'X-Auth-Token: CLIENT_TOKEN' \
+	        -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
+	        -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
+	        -d '{"patient":{
+	          "id":"1",
+	          "contact": {"name":"Jane Doe", "href":"mailto:jdoe@example.edu"},
+	          "features":[{"id":"HP:0000522"}],
+	          "genomicFeatures":[{"gene":{"id":"NGLY1"}}],
+	          "test": true
+	        }}' localhost:8000/v1/match
+	      </pre>
+			</div><!--end of <div class="col-sm">-->
+			<div class="col-sm">
+				<div class="row">
+					<div class="col-sm">
+						<strong>Interactive query:</strong><br><br>
+
+						<form method="POST">
+	            <div class="row">
+	              <label for="patients_id" class="col-sm-4 col-form-label"><strong>Patient's id</strong></label>
+	              <div>
+	                <input type="text" name="patients_id" id="patients_id" value="1" size="5">
+	              </div>
+	            </div>
+							<div class="row">
+								<label for="name" class="col-sm-4 col-form-label"><strong>Submitter's name</strong></label>
+	              <div>
+	                <input type="text" id="name" name="name" value="" size="30">
+	              </div>
+							</div>
+	            <div class="row">
+	              <label for="email" class="col-sm-4 col-form-label"><strong>Submitter's email</strong></label>
+	              <div>
+	                <input type="text" id="email" name="email" size="30">
+	              </div>
+	            </div>
+	            <div class="row">
+	              <label for="features" class="col-sm-4 col-form-label"><strong>HPO features</strong></label>
+	              <div>
+	                <input type="text" name="features" id="features" size="30">
+	              </div>
+	            </div>
+	            <div class="row">
+	              <label for="genomic_features" class="col-sm-4 col-form-label"><strong>Genes</strong></label>
+	              <div>
+	                <input type="text" name="genomic_features" id="genomic_features" size="30">
+	              </div>
+	            </div>
+	            <div class="row">
+	              <label for="token" class="col-sm-4 col-form-label"><strong>Author. token</strong></label>
+	              <div class="col-sm6">
+	                <input type="text" name="token" id="token" value="" size="30">
+	              </div>
+							</div>
+							<br>
+	      			<div class="row">
+	              <div class="col-sm5 justify-content-md-center">
+	                <button type="submit" class="btn btn-primary mb-2">Submit search</button>
+	              </div>
+	            </div>
+	          </form>
+					</div>
+				</div>
+			</div><!--end of <div class="col-sm">-->
+		</div><!--end of <div class="row">-->
+  </div><!--end of jumbotron-->
+
+  <div class="container">
+    <div class="row">
+			<div class="col-sm-4 col-form-label"><strong>Submitted json query:</strong></div>
+			<div>
+				{{json_query}}
+			</div>
+		</div>
+		<br><br>
+		{% if result %}
+			<div class="row">
+				<div class="col-sm-4 col-form-label"><strong>Server response:</strong></div>
+				<div>
+					{% if result.results %}
+						{% for patient in result.results %}
+							{{patient}}<br><br>
+						{% endfor %}
+					{% elif result.message %}
+						{{result.message}}
+					{% endif %}
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</body>
+</html>
