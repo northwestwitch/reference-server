@@ -87,7 +87,6 @@ def index():
 @auth_token_required()
 def match():
     """Return patients similar to the query patient"""
-    logger.info("#############IM IN MATCH!!!!!!###############")
     @after_this_request
     def add_header(response):
         response.headers['Content-Type'] = API_MIME_TYPE
